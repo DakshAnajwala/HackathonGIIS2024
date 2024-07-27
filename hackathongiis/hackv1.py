@@ -1,8 +1,10 @@
+import base64
+
 import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-# Sample data
+#  Data
 eli_dict = {
     "Afghanistan": 45,
     "Albania": 70,
@@ -207,9 +209,23 @@ custom_color_scale = [
     [1, 'green']  # High values in green
 ]
 
+# Define map projection options
+projections = [
+    "natural earth",
+    "orthographic",
+    "equirectangular",
+    "mercator",
+    "winkel tripel",
+    "miller"
+]
+
+# Optionally, add more content
+st.write("Enjoy the background music!")
+
+
 if __name__ == '__main__':
-    st.set_page_config(page_title="Project: ELI", layout="wide")  # page title
-    st.title("Project: ELI")
+    st.set_page_config(page_title="Project: ELI - Element Life Index", layout="wide")  # page title
+    st.title("Project: ELI - Element Life Index")
     # Add custom CSS
     # Add custom CSS for the big font
     st.markdown("""
@@ -231,6 +247,9 @@ if __name__ == '__main__':
     df.rename(columns={'index': 'Country'}, inplace=True)
     print(df.head())
 
+    # Creating the map
+    selected_projection = st.selectbox("Select Map Projection", projections)
+
     # Create a Plotly map
     fig = px.choropleth(
         df,
@@ -246,7 +265,7 @@ if __name__ == '__main__':
     # Set the title and size of the map
     fig.update_layout(
         title_text="",
-        geo=dict(showframe=False, showcoastlines=True, projection_type="natural earth"),
+        geo=dict(showframe=False, showcoastlines=True, projection_type=selected_projection),
         height=700,  # Set the height of the map
         width=4000  # Set the width of the map
     )
@@ -256,7 +275,7 @@ if __name__ == '__main__':
         geo=dict(
             showframe=False,
             showcoastlines=True,
-            projection_type="natural earth",
+            projection_type=selected_projection,
             showcountries=True,
             countrycolor='black',  # Color of the country borders
             countrywidth=0.25
@@ -277,7 +296,7 @@ if __name__ == '__main__':
             showlakes=False,
             lakecolor='rgb(255, 255, 255)',
             showframe=False,
-            projection_type="orthographic"
+            projection_type=selected_projection
         ),
         hovermode="closest"
     )
@@ -288,7 +307,8 @@ if __name__ == '__main__':
         "**The Elemental Life Index (ELI)** Over 99% of a human cell consists of five key elements: carbon, hydrogen, oxygen, nitrogen, and phosphorus. These elements are crucial for the structure and function of all living organisms on Earth. This composition is consistent across various life forms, from humans to bacteria to plants")
 
     with st.expander("Biodiversity"):
-        st.write("Biodiversity refers to the variety of life on Earth, encompassing the diversity within species, between species, and among ecosystems. It includes all living organisms from different sources, such as terrestrial, marine, and desert ecosystems, and the ecological complexes they form.")
+        st.write(
+            "Biodiversity refers to the variety of life on Earth, encompassing the diversity within species, between species, and among ecosystems. It includes all living organisms from different sources, such as terrestrial, marine, and desert ecosystems, and the ecological complexes they form.")
 
     with st.expander("Soil Fertility"):
         st.write(
@@ -309,6 +329,3 @@ if __name__ == '__main__':
     with st.expander("Environmental Health"):
         st.write(
             "Environmental health is a branch of public health that focuses on the interactions between people and their environment. It aims to identify, assess, and control environmental factors that can potentially affect health. This field encompasses the study of natural and built environments and their impact on human health and well-being.")
-
-
-
