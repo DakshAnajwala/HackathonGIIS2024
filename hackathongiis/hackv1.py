@@ -1,5 +1,4 @@
 import base64
-
 import streamlit as st
 import plotly.express as px
 import pandas as pd
@@ -218,10 +217,6 @@ projections = [
     "winkel tripel",
     "miller"
 ]
-
-# Optionally, add more content
-st.write("Enjoy the background music!")
-
 
 if __name__ == '__main__':
     st.set_page_config(page_title="Project: ELI - Element Life Index", layout="wide")  # page title
