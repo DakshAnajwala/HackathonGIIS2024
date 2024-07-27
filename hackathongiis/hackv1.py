@@ -200,41 +200,38 @@ eli_dict = {
     "Zimbabwe": 66
 }
 
-
-# Convert the dictionary to a DataFrame, whilst creating a dataframe
-df = pd.DataFrame.from_dict(eli_dict, orient='index', columns=['ELI'])
-
-# Reset index to make 'Country' a column rather than an index
-df.reset_index(inplace=True)
-df.rename(columns={'index': 'Country'}, inplace=True)
-print(df.head())
-
 # Define a custom color scale from green to red
 custom_color_scale = [
-    [0, 'red'],      # Low values in red
-    [0.5, 'yellow'], # Intermediate values in yellow
-    [1, 'green']     # High values in green
+    [0, 'red'],  # Low values in red
+    [0.5, 'yellow'],  # Intermediate values in yellow
+    [1, 'green']  # High values in green
 ]
 
 if __name__ == '__main__':
-    st.set_page_config(page_title="ELI - Element Life Index")  # page title
-    st.title("ELI - Element Life Index")
+    st.set_page_config(page_title="Project: ELI", layout="wide")  # page title
+    st.title("Project: ELI")
+    # Add custom CSS
+    # Add custom CSS for the big font
+    st.markdown("""
+        <style>
+        .big-font {
+            font-size: 35px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    eli_description = """
-    **The “Elemental Life Index” (ELI)** is a composite metric representing the status of a country’s relationship with essential life elements. It reflects how well a country supports life through the availability and management of these elements. Here’s a breakdown of what ELI could include:
+    # Use the custom CSS class to display the text
+    st.markdown('<p class="big-font">ELI Map</p>', unsafe_allow_html=True)
 
-    1. **Biodiversity**: Measures the variety and variability of life within the country, including the number of species and ecosystems.
-    2. **Soil Fertility**: Assesses the richness of soil in essential nutrients required for plant growth and agricultural productivity.
-    3. **Air Quality**: Evaluates the cleanliness of the air and the presence of pollutants that can affect human health and ecosystems.
-    4. **Water Quality**: Examines the availability and cleanliness of water resources, including rivers, lakes, and groundwater.
-    5. **Elemental Abundance**: Looks at the presence and accessibility of critical elements like carbon, nitrogen, oxygen, phosphorus, and trace elements necessary for biological processes.
-    6. **Environmental Health**: Considers overall environmental conditions, including the impact of human activities on ecosystems and natural resources.
-    7. **Human Health**: Includes metrics related to nutrition, access to clean water, and air, reflecting how elemental availability impacts public health.
-    """
+    # Convert the dictionary to a DataFrame, whilst creating a dataframe
+    df = pd.DataFrame.from_dict(eli_dict, orient='index', columns=['ELI'])
 
-    st.markdown(eli_description)
+    # Reset index to make 'Country' a column rather than an index
+    df.reset_index(inplace=True)
+    df.rename(columns={'index': 'Country'}, inplace=True)
+    print(df.head())
 
-    # Create a Plotly choropleth map
+    # Create a Plotly map
     fig = px.choropleth(
         df,
         locations="Country",
@@ -242,16 +239,76 @@ if __name__ == '__main__':
         color="ELI",
         hover_name="Country",
         hover_data=["ELI"],
-        color_continuous_scale=custom_color_scale  # Reverse the colour scale for green to red
+        color_continuous_scale=custom_color_scale  # Use the custom colour scale defined above
 
     )
 
-    # Set the title of the map
+    # Set the title and size of the map
     fig.update_layout(
-        title_text="World Map with Hover Data",
-        geo=dict(showframe=False, showcoastlines=False, projection_type="equirectangular")
+        title_text="",
+        geo=dict(showframe=False, showcoastlines=True, projection_type="natural earth"),
+        height=700,  # Set the height of the map
+        width=4000  # Set the width of the map
     )
 
-    # Display the map in Streamlit
-    st.title("Interactive World Map")
-    st.plotly_chart(fig)
+    fig.update_layout(
+        title_text="",
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            projection_type="natural earth",
+            showcountries=True,
+            countrycolor='black',  # Color of the country borders
+            countrywidth=0.25
+        )
+    )
+
+    # Use JavaScript to add outline on hover (requires Plotly Dash or similar for full effect)
+    fig.update_layout(
+        geo=dict(
+            showsubunits=True,
+            showland=True,
+            showocean=True,
+            showrivers=False,
+            showcoastlines=True,
+            showcountries=True,
+            landcolor='rgb(242, 242, 242)',
+            oceancolor='rgb(204, 204, 255)',
+            showlakes=False,
+            lakecolor='rgb(255, 255, 255)',
+            showframe=False,
+            projection_type="orthographic"
+        ),
+        hovermode="closest"
+    )
+
+    st.plotly_chart(fig)  # Displays the map
+
+    st.markdown(
+        "**The Elemental Life Index (ELI)** Over 99% of a human cell consists of five key elements: carbon, hydrogen, oxygen, nitrogen, and phosphorus. These elements are crucial for the structure and function of all living organisms on Earth. This composition is consistent across various life forms, from humans to bacteria to plants")
+
+    with st.expander("Biodiversity"):
+        st.write("Biodiversity refers to the variety of life on Earth, encompassing the diversity within species, between species, and among ecosystems. It includes all living organisms from different sources, such as terrestrial, marine, and desert ecosystems, and the ecological complexes they form.")
+
+    with st.expander("Soil Fertility"):
+        st.write(
+            "Soil fertility refers to the capacity of soil to sustain agricultural plant growth, providing the necessary habitat and nutrients for plants to produce consistent and high-quality yields. A fertile soil must supply essential nutrients and water in adequate amounts and proportions, and be free of toxic substances that could inhibit plant growth")
+
+    with st.expander("Air Quality"):
+        st.write(
+            "Air quality is a measure of how clean or polluted the air is. It is determined by assessing the levels of various pollutants present in the atmosphere. These pollutants can be in the form of gases, particulate matter, or biological molecules. The concept of air quality is crucial because the air we breathe directly impacts our health, the environment, and even the climate.")
+
+    with st.expander("Water Quality"):
+        st.write(
+            "Water resources, including rivers, lakes, and groundwater, are essential for human survival and ecological balance, yet their availability varies significantly across the globe. Effective monitoring and sustainable management practices are crucial for ensuring the safety and accessibility of water resources for current and future generations.")
+
+    with st.expander("Elemental Abundance"):
+        st.write(
+            "The biogeochemical cycles of critical elements such as carbon, nitrogen, oxygen, phosphorus, and various trace elements are fundamental to life on Earth. These essential elements circulate through the atmosphere, hydrosphere, lithosphere, and biosphere, influencing ecosystem health and productivity.")
+
+    with st.expander("Environmental Health"):
+        st.write(
+            "Environmental health is a branch of public health that focuses on the interactions between people and their environment. It aims to identify, assess, and control environmental factors that can potentially affect health. This field encompasses the study of natural and built environments and their impact on human health and well-being.")
+
+
+
